@@ -1,6 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 
 class QRCodePage extends StatefulWidget {
   const QRCodePage({Key? key}) : super(key: key);
@@ -35,10 +36,25 @@ class _QRCodePageState extends State<QRCodePage> {
             if (ticket != '')
               Padding(
                 padding: const EdgeInsets.only(bottom: 24.0),
-                child: Text(
-                  'Scanned Text:\n $ticket',
-                  style: const TextStyle(fontSize: 20),
-                ),
+                child: new InkWell(
+                  child: new RichText(text:
+                    new TextSpan(
+                      style: new TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.black,
+                      ),
+                      children: <TextSpan>[
+                        new TextSpan(text: 'Scanned Text:\n', style:  const TextStyle(fontSize: 20)),
+                        new TextSpan(text: '$ticket', style:  const TextStyle(fontSize: 20, color: Colors.blue), 
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => launch(ticket),
+                          ),
+                      ],
+                    )
+                  ),
+                  //onTap:  () => launch(ticket),
+                )
+                
               ),
             ElevatedButton.icon(
               onPressed: readQRCode,
@@ -50,4 +66,9 @@ class _QRCodePageState extends State<QRCodePage> {
       ),
     );
   }
+
+
+
+
+
 }

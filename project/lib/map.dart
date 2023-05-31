@@ -12,19 +12,34 @@ class MapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tomtomHQ = new LatLng(40.63063617601428, -8.657445837630856);
+    final ua = new LatLng(40.63063617601428, -8.657445837630856);
+    //final deti = new LatLng(40.63317591846193, -8.659494546730407);
+    //final reitoria = new LatLng(40.63135360702917, -8.657449692844947);
 
-    final initialMarker =
+    final deti =
       new Marker(
-        width: 50.0,
-        height: 50.0,
-        point: tomtomHQ,
+        width: 20.0,
+        height: 20.0,
+        point: new LatLng(40.63317591846193, -8.659494546730407),
         builder: (BuildContext context) => const Icon(
-            Icons.room_service,
+            Icons.account_balance_rounded,
             size: 20.0,
-            color: Colors.red),
+            color: Colors.black),
       );
-    markers.add(initialMarker);
+    final reitoria =
+      new Marker(
+        width: 20.0,
+        height: 20.0,
+        point: new LatLng(40.63135360702917, -8.657449692844947),
+        builder: (BuildContext context) => const Icon(
+            Icons.account_balance_rounded,
+            size: 20.0,
+            color: Colors.black),
+      );
+
+
+    markers.add(deti);
+    markers.add(reitoria);
 
     
 
@@ -64,7 +79,7 @@ class MapPage extends StatelessWidget {
             child: Stack(
               children: <Widget>[
                 FlutterMap(
-                  options: new MapOptions(center: tomtomHQ, zoom: 16.0),
+                  options: new MapOptions(center: ua, zoom: 16.0),
                   layers: [
                     new TileLayerOptions(
                       urlTemplate: "https://api.tomtom.com/map/1/tile/basic/main/"
@@ -88,7 +103,7 @@ class MapPage extends StatelessWidget {
                   child: TextField(
                     onSubmitted: (value) {
                       print('$value');
-                      getAddresses(value, tomtomHQ.latitude, tomtomHQ.longitude);
+                      getAddresses(value, ua.latitude, ua.longitude);
                     },
                   )
                 )
