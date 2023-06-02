@@ -35,7 +35,7 @@ dependencies:
   flutter_map: 0.10.1+1
   map_markers: ^0.1.0
   flutter_map_marker_cluster: ^0.3.3
-
+  flutter_polyline_points: any
   http: 0.12.2
   
 
@@ -45,6 +45,7 @@ dependencies:
   url_launcher: ^6.0.5
   flutter_map_marker_popup: ^0.1.4
   latlong2: ^0.8.2
+  flutter_map_tappable_polyline: ^1.2.0
 
 dev_dependencies:
   flutter_test:

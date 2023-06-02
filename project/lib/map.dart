@@ -1,7 +1,12 @@
+import "dart:convert";
+import "dart:js_util";
+
 import "package:flutter/gestures.dart";
 import 'package:flutter/material.dart';
 import "package:flutter_map/flutter_map.dart";
 import "package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart";
+import "package:flutter_map_tappable_polyline/flutter_map_tappable_polyline.dart";
+import "package:flutter_polyline_points/flutter_polyline_points.dart";
 import 'package:map_markers/map_markers.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import "package:latlong/latlong.dart";
@@ -30,6 +35,30 @@ class MapPage extends StatelessWidget {
       }
       return " ";
     }
+
+    var latL = [];
+    var lonL = [];
+    
+    List<LatLng> polyCoordinates = [];
+
+    void getPolyPoints() async {
+      PolylinePoints polypoints = PolylinePoints();
+      //PolylineResult result = polypoints.getRouteBetweenCoordinates(apiKey, PointLatLng(ua.latitude, ua.longitude), const PointLatLng(40.552196, -8.686077), travelMode: TravelMode.walking);
+      var  ori_lat = ua.latitude;
+      var ori_lon = ua.longitude;
+      var dest_lat = 40.552196;
+      var dest_lon = -8.686077;
+      final res = await http.get(Uri.parse('https://api.tomtom.com/routing/1/calculateRoute/' + '$ori_lat' + '%2C' + '$ori_lon' + '%3A' + '$dest_lat' + '%2C' + '$dest_lon' + '/json?computeBestOrder=true&routeRepresentation=polyline&sectionType=pedestrian&travelMode=pedestrian&key=uQpFMcxisuAQAN46ttbJmtorIczOhYPC'));
+      print(json.decode(res.body)['routes'][0]['legs'][0]['points'][0]);
+      /*
+      for(var p in json.decode(res.body)['routes'][0]['legs'][0]['points']){
+        latL.add(p['latitude']);
+        lonL.add(p['longitude']);
+      }*/
+    }
+    
+    getPolyPoints();
+
     final deti =
       new Marker(
         width: 20.0,
@@ -443,15 +472,23 @@ class MapPage extends StatelessWidget {
                           "{z}/{x}/{y}.png?key={apiKey}",
                       additionalOptions: {"apiKey": apiKey},
                     ),
+                    TappablePolylineLayerOptions(
+                      polylineCulling: true,
+                      polylines: [TaggedPolyline(points: [
+                        for(var lat in latL) LatLng(lat,lonL[latL.indexOf(lat)])
+                      ],)],       
+                      onTap: (TaggedPolyline polyline) => print(polyline.tag),
+                      onMiss: () => print("No polyline tapped"),
+                    ),
                     MarkerClusterLayerOptions(
                       maxClusterRadius: 190,
                       disableClusteringAtZoom: 16,
-                      size: Size(50, 50),
-                      fitBoundsOptions: FitBoundsOptions(
+                      size: const Size(50, 50),
+                      fitBoundsOptions: const FitBoundsOptions(
                         padding: EdgeInsets.all(50),
                       ),
                       markers: markers,
-                      polygonOptions: PolygonOptions(
+                      polygonOptions: const PolygonOptions(
                           borderColor: Colors.blueAccent,
                           color: Colors.black12,
                           borderStrokeWidth: 3),
@@ -459,7 +496,7 @@ class MapPage extends StatelessWidget {
                         return Container(
                           alignment: Alignment.center,
                           decoration:
-                              BoxDecoration(color: Colors.amber, shape: BoxShape.circle),
+                              const BoxDecoration(color: Colors.amber, shape: BoxShape.circle),
                           child: Text('${markers.length}'),
 
                         );
@@ -471,8 +508,8 @@ class MapPage extends StatelessWidget {
                           alignment: Alignment.center,
                             height: 50,
                             width: 100,
-                            decoration: BoxDecoration(
-                                color: Colors.black, shape: BoxShape.rectangle),
+                            decoration: const BoxDecoration(
+                                color: Colors.amber, shape: BoxShape.rectangle),
                             child: Text(
                               findMarker(marker).toString(),
                               style: const TextStyle(color: Colors.white),
@@ -483,11 +520,11 @@ class MapPage extends StatelessWidget {
                   ],
                 ),
                 Container(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     alignment: Alignment.bottomLeft,
-                    child: Icon(Icons.map_rounded)),
+                    child: const Icon(Icons.map_rounded)),
                 Container(
-                  padding: EdgeInsets.all(30),
+                  padding: const EdgeInsets.all(30),
                   alignment: Alignment.topRight,
                   child: TextField(
                     onSubmitted: (value) {

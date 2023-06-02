@@ -198,6 +198,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.4"
+  flutter_map_tappable_polyline:
+    dependency: "direct main"
+    description:
+      name: flutter_map_tappable_polyline
+      sha256: "2201920b21937e64d1cd34de15190b3e549df2e8333e037edd6db30e6b543401"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -206,6 +214,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.14"
+  flutter_polyline_points:
+    dependency: "direct main"
+    description:
+      name: flutter_polyline_points
+      sha256: bb2afc3acf0923179b04b7318cd2d9e9a2303a53413dd07d10b8b44274866282
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.4"
   flutter_slidable:
     dependency: "direct main"
     description:
