@@ -8,7 +8,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5, 
+      length: 4, 
       child: Scaffold(appBar: AppBar(title: Text("MovingCampus"))
       ,body: Column(
         children: [
@@ -18,7 +18,6 @@ class HomePage extends StatelessWidget {
               Tab(icon: Icon(Icons.home, color: Colors.amber,), text: "Events" ),
               Tab(icon: Icon(Icons.maps_home_work, color: Colors.amber,), text: "Location"),
               Tab(icon: Icon(Icons.qr_code_2, color: Colors.amber,), text: "QR Code"),
-              Tab(icon: Icon(Icons.room, color: Colors.amber,), text: "Classroom"),
               Tab(icon: Icon(Icons.person, color: Colors.amber,), text: "Profile"),
           ]),
           Expanded
@@ -27,10 +26,8 @@ class HomePage extends StatelessWidget {
               physics: NeverScrollableScrollPhysics(),
               children: [
               EventsWidget(),
-              Container(child: 
-                Center(child: Text("Location Tab")),),
-              QRCodePage(),
               MapPage(),
+              QRCodePage(),
               Container(child: 
                 Center(child: Text("Profile Tab")),)
             ]),

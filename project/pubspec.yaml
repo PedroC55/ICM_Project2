@@ -46,6 +46,8 @@ dependencies:
   flutter_map_marker_popup: ^0.1.4
   latlong2: ^0.8.2
   flutter_map_tappable_polyline: ^1.2.0
+  geolocator: ^6.2.1
+  geocoding: ^1.0.1
 
 dev_dependencies:
   flutter_test:

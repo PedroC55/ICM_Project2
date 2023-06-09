@@ -1,5 +1,4 @@
 import "dart:convert";
-import "dart:js_util";
 
 import "package:flutter/gestures.dart";
 import 'package:flutter/material.dart';
@@ -13,51 +12,109 @@ import "package:latlong/latlong.dart";
 import "package:http/http.dart" as http;
 import "dart:convert" as convert;
 import 'example_popup.dart';
+import 'package:geolocator/geolocator.dart';
 
 
-class MapPage extends StatelessWidget {
+
+class MapPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => MapPageState();
+}
+
+class MapPageState extends State<MapPage>{
   final String apiKey = "uQpFMcxisuAQAN46ttbJmtorIczOhYPC";
-  final List<Marker> markers = List.empty(growable: true);
+  List<Marker> _markers = List.empty(growable: true);
+  final List<Marker> markers2 = List.empty(growable: true);
   final List<String> depts = List.empty(growable: true);
+  LatLng _currentPos = new LatLng(0, 0);
+  List<TaggedPolyline> _polylines = <TaggedPolyline>[];
 
 
   @override
   Widget build(BuildContext context) {
     final PopupController _popupController = PopupController();
     final ua = new LatLng(40.63063617601428, -8.657445837630856);
+    
     //final deti = new LatLng(40.63317591846193, -8.659494546730407);
     //final reitoria = new LatLng(40.63135360702917, -8.657449692844947);
     String findMarker(Marker m) {
-      for(int i = 0; i < markers.length; i++){
-        if(markers.elementAt(i).point == m.point){
+      for(int i = 0; i < markers2.length; i++){
+        if(markers2.elementAt(i).point == m.point){
           return depts.elementAt(i);
         }  
       }
       return " ";
     }
+/// Determine the current position of the device.
+///
+/// When the location services are not enabled or permissions
+/// are denied the `Future` will return an error.
+    /*
+    Future<LatLng> _determinePosition() async {
+      bool serviceEnabled;
+      LocationPermission permission;
+
+      // Test if location services are enabled.
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        // Location services are not enabled don't continue
+        // accessing the position and request users of the 
+        // App to enable the location services.
+        return Future.error('Location services are disabled.');
+      }
+
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          // Permissions are denied, next time you could try
+          // requesting permissions again (this is also where
+          // Android's shouldShowRequestPermissionRationale 
+          // returned true. According to Android guidelines
+          // your App should show an explanatory UI now.
+          return Future.error('Location permissions are denied');
+        }
+      }
+      
+      if (permission == LocationPermission.deniedForever) {
+        // Permissions are denied forever, handle appropriately. 
+        return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+      } 
+
+      // When we reach here, permissions are granted and we can
+      // continue accessing the position of the device.
+      Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LatLng userlatlng = new LatLng(pos.latitude, pos.longitude);
+      _currentPos = userlatlng;
+      return Future.delayed(const Duration(seconds: 2), () => userlatlng);
+    }*/
+
 
     var latL = [];
     var lonL = [];
     
     List<LatLng> polyCoordinates = [];
-
-    void getPolyPoints() async {
-      PolylinePoints polypoints = PolylinePoints();
-      //PolylineResult result = polypoints.getRouteBetweenCoordinates(apiKey, PointLatLng(ua.latitude, ua.longitude), const PointLatLng(40.552196, -8.686077), travelMode: TravelMode.walking);
-      var  ori_lat = ua.latitude;
-      var ori_lon = ua.longitude;
-      var dest_lat = 40.552196;
-      var dest_lon = -8.686077;
+    void getPolyPoints(userLoc, searchLoc) async {
+      print(userLoc);
+      print(searchLoc);
+      var  ori_lat = userLoc.latitude;
+      var ori_lon = userLoc.longitude;
+      var dest_lat = searchLoc.latitude;
+      var dest_lon = searchLoc.longitude;
       final res = await http.get(Uri.parse('https://api.tomtom.com/routing/1/calculateRoute/' + '$ori_lat' + '%2C' + '$ori_lon' + '%3A' + '$dest_lat' + '%2C' + '$dest_lon' + '/json?computeBestOrder=true&routeRepresentation=polyline&sectionType=pedestrian&travelMode=pedestrian&key=uQpFMcxisuAQAN46ttbJmtorIczOhYPC'));
-      print(json.decode(res.body)['routes'][0]['legs'][0]['points'][0]);
-      /*
+      print(json.decode(res.body)['routes'][0]['legs'][0]['points'][0]['latitude']);
+      
       for(var p in json.decode(res.body)['routes'][0]['legs'][0]['points']){
         latL.add(p['latitude']);
         lonL.add(p['longitude']);
-      }*/
+        polyCoordinates.add(LatLng(p['latitude'], p['longitude']));
+      }
+      setState(() {
+        _polylines = [TaggedPolyline(points: polyCoordinates, strokeWidth: 10.0, color: Colors.blue)];
+      });
+      
     }
-    
-    getPolyPoints();
 
     final deti =
       new Marker(
@@ -364,121 +421,203 @@ class MapPage extends StatelessWidget {
             color: Colors.black),
       );
 
-    markers.add(deti);
+    markers2.add(deti);
     depts.add("Department\nDETI");
-    markers.add(reitoria);
+    markers2.add(reitoria);
     depts.add("Department\nDean's Office");
-    markers.add(dbio);
+    markers2.add(dbio);
     depts.add("Department\nDBIO");
-    markers.add(psi);
+    markers2.add(psi);
     depts.add("Department\nDEP");
-    markers.add(degeit);
+    markers2.add(degeit);
     depts.add("Department\nDEGEIT");
-    markers.add(dmat);
+    markers2.add(dmat);
     depts.add("Department\nDMAT");
-    markers.add(essua);
+    markers2.add(essua);
     depts.add("Department\nESSUA");
-    markers.add(casaEst);
+    markers2.add(casaEst);
     depts.add("Social Place\nBE");
-    markers.add(cantinaCrasto);
+    markers2.add(cantinaCrasto);
     depts.add("Canteen\nCantina do Crasto");
-    markers.add(cantina);
+    markers2.add(cantina);
     depts.add("Canteen\nCantina de Santiago");
-    markers.add(residencias);
+    markers2.add(residencias);
     depts.add("Residences\nResidências de Santiago");
-    markers.add(restauranteUni);
+    markers2.add(restauranteUni);
     depts.add("Canteen\nRestaurante Universitário");
-    markers.add(dgeo);
+    markers2.add(dgeo);
     depts.add("Department\nDGEO");
-    markers.add(dq);
+    markers2.add(dq);
     depts.add("Department\nDQ");
-    markers.add(dcspt);
+    markers2.add(dcspt);
     depts.add("Department\nDCSPT");
-    markers.add(demac);
+    markers2.add(demac);
     depts.add("Department\nDEMAC");
-    markers.add(dfis);
+    markers2.add(dfis);
     depts.add("Department\nDFIS");
-    markers.add(isca);
+    markers2.add(isca);
     depts.add("Department\nISCA");
-    markers.add(esan);
+    markers2.add(esan);
     depts.add("Department\nISAN");
-    markers.add(estga);
+    markers2.add(estga);
     depts.add("Department\nESTGA");
-    markers.add(meca);
+    markers2.add(meca);
     depts.add("Department\nDEM");
-    markers.add(meialua);
+    markers2.add(meialua);
     depts.add("Social Place\nMeia Lua");
-    markers.add(civil);
+    markers2.add(civil);
     depts.add("Department\nDEC");
-    markers.add(artes);
+    markers2.add(artes);
     depts.add("Department\nDeCA");
-    markers.add(cp);
+    markers2.add(cp);
     depts.add("Department\nCP");
-    markers.add(cesam);
+    markers2.add(cesam);
     depts.add("Department\nCESAM");
-    markers.add(fotossintese);
+    markers2.add(fotossintese);
     depts.add("Social Place\nFotossíntese");
-    markers.add(pavilhao);
+    markers2.add(pavilhao);
     depts.add("Sports Facility\nPavilhão Aristides Hall");
-    markers.add(linguas);
+    markers2.add(linguas);
     depts.add("Department\nDLC");
-    markers.add(amb);
+    markers2.add(amb);
     depts.add("Department\nDAO");
 
-    getAddresses(value, lat, lon) async {
-      final Map<String,String> queryParameters = {'key': '$apiKey'};
-      queryParameters['lat'] = '$lat';
-      queryParameters['lon'] = '$lon';
-      var response = await http.get( Uri.https('api.tomtom.com',
-        '/search/2/search/$value.json',
-        queryParameters));
-      var jsonData = convert.jsonDecode(response.body);
-      print('$jsonData');
-      var results = jsonData['results'];
-      for ( var element in results) {
-        var position = element['position'];
-         var marker = new Marker(
-          point: new LatLng(position['lat'], position['lon']),
-          width: 50.0,
-          height: 50.0,
-          builder: (BuildContext context) => const Icon(
-              Icons.location_on,
-              size: 40.0,
-              color: Colors.blue),
-        );
-        markers.add(marker);
+
+    _markers = markers2;
+
+    Future<LatLng> getUserLocation() async {
+      bool serviceEnabled;
+      LocationPermission permission;
+
+      // Check if location services are enabled
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        // Location services are disabled, handle accordingly
+        //return;
       }
 
+      // Check location permission status
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        // Location permissions are denied, request permission
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          // Location permissions are still denied, handle accordingly
+          //return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        // Location permissions are permanently denied, handle accordingly
+        //return;
+      }
+
+      // Get the current position
+      Position position = await Geolocator.getCurrentPosition();
+      _currentPos = new LatLng(position.latitude, position.longitude);
+      return  LatLng(position.latitude, position.longitude);
     }
 
+    getAddresses(value, lat, lon) async {
+      LatLng ponto = new LatLng(0, 0);
+      String pos = value.toString();
+      if(pos.substring(0,2).contains("04")){
+        ponto = deti.point;
+      }
+      if(pos.substring(0,2).contains("02")){
+        ponto = linguas.point;
+      }
+      if(pos.substring(0,2).contains("03")){
+        ponto = cesam.point;
+      }
+      if(pos.substring(0,2).contains("25") || pos.toString().toLowerCase().contains("reitoria")){
+        ponto = reitoria.point;
+      }
+      if(pos.substring(0,2).contains("08")){
+        ponto = dbio.point;
+      }
+      if(pos.substring(0,2).contains("09")){
+        ponto = demac.point;
+      }
+      if(pos.substring(0,2).contains("05")){
+        ponto = psi.point;
+      }if(pos.substring(0,2).contains("10")){
+        ponto = degeit.point;
+      }if(pos.substring(0,2).contains("11")){
+        ponto = dmat.point;
+      }if(pos.substring(0,2).contains("30")){
+        ponto = essua.point;
+      }if(pos.substring(0,1).contains("N") || pos.toString().toLowerCase().contains("casa do estudante") || pos.toString().toLowerCase().contains("be")){
+        ponto = casaEst.point;
+      }if(pos.substring(0,1).contains("M") || pos.toString().toLowerCase().contains("cantina do crasto")){
+        ponto = cantinaCrasto.point;
+      }if(pos.substring(0,1).contains("6") || pos.toString().toLowerCase().contains("cantina de santiago")){
+        ponto = cantina.point;
+      }if(pos.substring(0,1).contains("B") || pos.toString().toLowerCase().contains("residências")){
+        ponto = residencias.point;
+      }if(pos.substring(0,1).contains("F") || pos.toString().toLowerCase().contains("restaurante")){
+        ponto = restauranteUni.point;
+      }if(pos.substring(0,2).contains("16")){
+        ponto = dgeo.point;
+      }if(pos.substring(0,2).contains("15")){
+        ponto = dq.point;
+      }if(pos.substring(0,2).contains("12")){
+        ponto = dcspt.point;
+      }if(pos.substring(0,2).contains("13")){
+        ponto = dfis.point;
+      }if(pos.substring(0,2).contains("35")){
+        ponto = isca.point;
+      }if(pos.substring(0,2).contains("34")){
+        ponto = esan.point;
+      }if(pos.substring(0,2).contains("20")){
+        ponto = estga.point;
+      }if(pos.substring(0,2).contains("22")){
+        ponto = meca.point;
+      }if(pos.toString().toLowerCase().contains("meia lua")){
+        ponto = meialua.point;
+      }if(pos.substring(0,2).contains("28")){
+        ponto = civil.point;
+      }if(pos.substring(0,2).contains("21")){
+        ponto = artes.point;
+      }if(pos.substring(0,2).contains("23")){
+        ponto = cp.point;
+      }if(pos.toString().toLowerCase().contains("fotossintese")){
+        ponto = fotossintese.point;
+      }if(pos.toString().toLowerCase().contains("pavilhão")){
+        ponto = pavilhao.point;
+      }if(pos.substring(0,2).contains("07")){
+        ponto = amb.point;
+      }
+      print(ponto);
+      
+      
+      
+      getUserLocation();
+      getPolyPoints(_currentPos, ponto);
+        
+        
+    }
+    getUserLocation();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "TomTom Map",
       home: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Center(
-
             child: Stack(
               children: <Widget>[
                 FlutterMap(
-                  options: new MapOptions(center: ua, zoom: 16.0, 
+                  options: MapOptions(center: ua , zoom: 16.0, 
                     plugins: [MarkerClusterPlugin(),],
                     onTap: (_) => _popupController
-                      .hidePopup(), 
+                      .hidePopup(),
+                    onLongPress: (_) => _polylines.clear(),
                   ),
                   layers: [
                     new TileLayerOptions(
                       urlTemplate: "https://api.tomtom.com/map/1/tile/basic/main/"
                           "{z}/{x}/{y}.png?key={apiKey}",
                       additionalOptions: {"apiKey": apiKey},
-                    ),
-                    TappablePolylineLayerOptions(
-                      polylineCulling: true,
-                      polylines: [TaggedPolyline(points: [
-                        for(var lat in latL) LatLng(lat,lonL[latL.indexOf(lat)])
-                      ],)],       
-                      onTap: (TaggedPolyline polyline) => print(polyline.tag),
-                      onMiss: () => print("No polyline tapped"),
                     ),
                     MarkerClusterLayerOptions(
                       maxClusterRadius: 190,
@@ -487,7 +626,7 @@ class MapPage extends StatelessWidget {
                       fitBoundsOptions: const FitBoundsOptions(
                         padding: EdgeInsets.all(50),
                       ),
-                      markers: markers,
+                      markers: _markers,
                       polygonOptions: const PolygonOptions(
                           borderColor: Colors.blueAccent,
                           color: Colors.black12,
@@ -517,6 +656,13 @@ class MapPage extends StatelessWidget {
                           )
                       ),
                     ),
+                    TappablePolylineLayerOptions(
+                      polylineCulling: true,
+                      polylines: _polylines,       
+                      onTap: (TaggedPolyline polyline) => print(polyline.tag),
+                      onMiss: () => print("No polyline tapped"),
+                    ),
+                    
                   ],
                 ),
                 Container(
@@ -530,6 +676,7 @@ class MapPage extends StatelessWidget {
                     onSubmitted: (value) {
                       print('$value');
                       getAddresses(value, ua.latitude, ua.longitude);
+
                     },
                   )
                 )
@@ -539,7 +686,4 @@ class MapPage extends StatelessWidget {
       ),
     );
   }
-}
-
-class PopupMarkerLayer {
 }
