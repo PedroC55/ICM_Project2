@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homework/events.dart';
+import 'package:homework/profile.dart';
 import 'package:homework/qr_code_scanner.dart';
 
 import 'map.dart';
@@ -28,8 +29,7 @@ class HomePage extends StatelessWidget {
               EventsWidget(),
               MapPage(),
               QRCodePage(),
-              Container(child: 
-                Center(child: Text("Profile Tab")),)
+              ProfilePage(),
             ]),
           )
       ],),

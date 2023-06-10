@@ -32,7 +32,8 @@ class MapPageState extends State<MapPage>{
 
   @override
   Widget build(BuildContext context) {
-    final PopupController _popupController = PopupController();
+    PopupController _popupController = PopupController();
+    TextEditingController textarea = new TextEditingController();
     final ua = new LatLng(40.63063617601428, -8.657445837630856);
     
     //final deti = new LatLng(40.63317591846193, -8.659494546730407);
@@ -112,8 +113,7 @@ class MapPageState extends State<MapPage>{
       }
       setState(() {
         _polylines = [TaggedPolyline(points: polyCoordinates, strokeWidth: 10.0, color: Colors.blue)];
-      });
-      
+      }); 
     }
 
     final deti =
@@ -517,7 +517,6 @@ class MapPageState extends State<MapPage>{
       _currentPos = new LatLng(position.latitude, position.longitude);
       return  LatLng(position.latitude, position.longitude);
     }
-
     getAddresses(value, lat, lon) async {
       LatLng ponto = new LatLng(0, 0);
       String pos = value.toString();
@@ -588,14 +587,8 @@ class MapPageState extends State<MapPage>{
       }if(pos.substring(0,2).contains("07")){
         ponto = amb.point;
       }
-      print(ponto);
-      
-      
-      
       getUserLocation();
       getPolyPoints(_currentPos, ponto);
-        
-        
     }
     getUserLocation();
     return MaterialApp(
@@ -611,14 +604,24 @@ class MapPageState extends State<MapPage>{
                     plugins: [MarkerClusterPlugin(),],
                     onTap: (_) => _popupController
                       .hidePopup(),
-                    onLongPress: (_) => _polylines.clear(),
+                    onLongPress: (_) => setState(() {
+                      _polylines.clear();
+                    }),
                   ),
                   layers: [
-                    new TileLayerOptions(
+                    TileLayerOptions(
                       urlTemplate: "https://api.tomtom.com/map/1/tile/basic/main/"
                           "{z}/{x}/{y}.png?key={apiKey}",
                       additionalOptions: {"apiKey": apiKey},
                     ),
+                    
+                    TappablePolylineLayerOptions(
+                      polylineCulling: true,
+                      polylines: _polylines,       
+                      onTap: (TaggedPolyline polyline) => print(polyline.tag),
+                      onMiss: () => print("No polyline tapped"),
+                    ),
+
                     MarkerClusterLayerOptions(
                       maxClusterRadius: 190,
                       disableClusteringAtZoom: 16,
@@ -656,12 +659,6 @@ class MapPageState extends State<MapPage>{
                           )
                       ),
                     ),
-                    TappablePolylineLayerOptions(
-                      polylineCulling: true,
-                      polylines: _polylines,       
-                      onTap: (TaggedPolyline polyline) => print(polyline.tag),
-                      onMiss: () => print("No polyline tapped"),
-                    ),
                     
                   ],
                 ),
@@ -673,10 +670,11 @@ class MapPageState extends State<MapPage>{
                   padding: const EdgeInsets.all(30),
                   alignment: Alignment.topRight,
                   child: TextField(
+                    controller: textarea,
                     onSubmitted: (value) {
                       print('$value');
                       getAddresses(value, ua.latitude, ua.longitude);
-
+                      textarea.clear();
                     },
                   )
                 )

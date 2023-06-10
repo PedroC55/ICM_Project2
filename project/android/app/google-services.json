@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "402387492032",
+    "project_id": "icm-flutter-6822e",
+    "storage_bucket": "icm-flutter-6822e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402387492032:android:d0e5dbead499da720ee125",
+        "android_client_info": {
+          "package_name": "com.example.homework"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "402387492032-io0rc4llfq4nahnh17m3c0b47g2vevci.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7S0mNFnwdO8YIlRNXcTM10qsCDfiwpvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "402387492032-io0rc4llfq4nahnh17m3c0b47g2vevci.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "402387492032-imgvjhn93v32bifuj85r9etatb96oaps.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.homework"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
