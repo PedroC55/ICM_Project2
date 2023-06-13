@@ -48,8 +48,19 @@ dependencies:
   flutter_map_tappable_polyline: ^1.2.0
   geolocator: ^6.2.1
   geocoding: ^1.0.1
-  firebase_core: ^0.7.0
-  cloud_firestore: ^0.16.0+1
+  firebase_core: any
+  cloud_firestore: any
+  firebase_auth: any
+  provider: ^6.0.5
+  google_sign_in: ^4.5.9
+  email_validator: ^2.1.17
+  sizer: ^2.0.15
+  firebase_storage: any
+  path: any
+  image_picker: any
+  permission_handler: ^5.1.0+2
+  camera: ^0.7.0+4
+  google_mlkit_text_recognition: any
 
 dev_dependencies:
   flutter_test:
@@ -74,7 +85,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+    - assets/campusapp_high_resolution_color_logo.png
+    - assets/user.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

@@ -15,11 +15,12 @@ class HomePage extends StatelessWidget {
         children: [
           TabBar(
             labelStyle: TextStyle(fontSize: 10), 
+            labelColor: Colors.blue,
             tabs: [
-              Tab(icon: Icon(Icons.home, color: Colors.amber,), text: "Events" ),
-              Tab(icon: Icon(Icons.maps_home_work, color: Colors.amber,), text: "Location"),
-              Tab(icon: Icon(Icons.qr_code_2, color: Colors.amber,), text: "QR Code"),
-              Tab(icon: Icon(Icons.person, color: Colors.amber,), text: "Profile"),
+              Tab(icon: Icon(Icons.home, color: Colors.blue,), text: "Events" ),
+              Tab(icon: Icon(Icons.maps_home_work, color: Colors.blue,), text: "Location"),
+              Tab(icon: Icon(Icons.qr_code_2, color: Colors.blue,), text: "QR Code"),
+              Tab(icon: Icon(Icons.person, color: Colors.blue,), text: "Profile"),
           ]),
           Expanded
           (

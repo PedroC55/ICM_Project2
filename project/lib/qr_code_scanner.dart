@@ -17,11 +17,11 @@ class _QRCodePageState extends State<QRCodePage> {
   readQRCode() async {
     String code = await FlutterBarcodeScanner.scanBarcode(
       "#FFFFFF",
-      "Cancelar",
+      "Cancel",
       false,
       ScanMode.QR,
     );
-    setState(() => ticket = code != '-1' ? code : 'Não validado');
+    setState(() => ticket = code != '-1' ? code : 'Not Validated');
   }
       @override
     @override
@@ -59,7 +59,7 @@ class _QRCodePageState extends State<QRCodePage> {
             ElevatedButton.icon(
               onPressed: readQRCode,
               icon: const Icon(Icons.qr_code),
-              label: const Text('Validar'),
+              label: const Text('Validate'),
             ),
           ],
         ),
